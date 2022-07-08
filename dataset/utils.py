@@ -1,6 +1,7 @@
 import json
 import gzip
 import io
+import jsonlines
 
 
 def load_lines(file_path, _encoding='utf-8'):
@@ -37,9 +38,21 @@ def load_json(file_path, _encoding='utf-8'):
 
 def serialize_json(items):
     for item in items:
-        yield json.dumps(item, ensure_ascii=False)
+        yield json.dumps(item, ensure_ascii=False, indent=4)
 
 
 def deserialize_json(lines):
     for line in lines:
         yield json.loads(line)
+
+
+def iterate_jl(file_path):
+    with jsonlines.open(file_path, mode='r') as infile:
+        for item in infile:
+            yield item
+
+
+def dump_as_jl(items, file_path):
+    with jsonlines.open(file_path, mode='w') as outfile:
+        for item in items:
+            outfile.write(item)
